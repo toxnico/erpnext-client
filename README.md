@@ -4,7 +4,7 @@ A Clojure library designed to interface Clojure programs with [ERPNext](https://
 
 ## Usage
 
-[![Clojars Project](https://img.shields.io/clojars/v/org.clojars.toxnico/erpnext-client.svg)](https://clojars.org/erpnext-client)
+[![Clojars Project](https://img.shields.io/clojars/v/erpnext-client.svg)](https://clojars.org/erpnext-client)
 
 Available functions :
 
