@@ -4,11 +4,11 @@ A Clojure library designed to interface Clojure programs with [ERPNext](https://
 
 ## Usage
 
-[![Clojars Project](https://img.shields.io/clojars/v/org.clojars.toxnico/erpnext-client.svg)](https://clojars.org/org.clojars.toxnico/erpnext-client)
+[![Clojars Project](https://img.shields.io/clojars/v/org.clojars.toxnico/erpnext-client.svg)](https://clojars.org/erpnext-client)
 
 Available functions :
 
-```
+```clojure
 ;Initialize the authentication atoms
 (login! "http://erpnext-host-base-url" "username" "password")
 
@@ -30,13 +30,19 @@ Available functions :
                                          :field2 "value2"})
 
 ;delete a document
-
+(erp-delete! "the-doc-type" "the-doc-name")
  
+;submit a document
+(erp-submit-document! "the-doc-type" "the-doc-name")
+
+;send an arbitrary RPC request (body being provided as a map):
+(erp-rpc-post! "the-method" body) 
+
 ```
 
 ## License
 
-Copyright © 2019 FIXME
+Copyright © 2019 
 
 This program and the accompanying materials are made available under the
 terms of the Eclipse Public License 2.0 which is available at
