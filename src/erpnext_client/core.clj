@@ -38,12 +38,19 @@
       (get :data)))
 
 (defn erp-get-by-name
-  "Returns a complete document by its unique name"
+  "Returns a complete document by its unique name. If the name does not exist, returns nil"
   [doctype name]
-  (let [url (make-url doctype name)]
-    (->> (http/get url
-                   {:cookies @auth-cookies})
-         response->data)))
+  (try
+    (let [url (make-url doctype name)]
+      (->> (http/get url
+                     {:cookies @auth-cookies})
+           response->data))
+    (catch Exception ex
+      (let [http-status (-> ex ex-data :status)]
+        (if (= 404 http-status)
+          nil ;erreur 404 -> on retourne un nil propre.
+          (throw ex)))))) ;sinon, on relance l'exception
+
 
 (defn erp-get
   "Sends a GET request and returns the content of 'data'"
@@ -130,4 +137,3 @@
   (let [cookies (erp-login->cookies user password)]
     (reset! auth-cookies cookies)
     (println "Logged in as " user)))
-
