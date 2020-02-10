@@ -1,6 +1,7 @@
 (ns erpnext-client.core
   (:require [clj-http.client :as http]
-            [cheshire.core :as json]))
+            [cheshire.core :as json]
+            [clojure.string :as s]))
 
 (def config (atom {:base "http://localhost:1180"
                    :rest "api/resource"
@@ -138,7 +139,7 @@
       (->> html
            (re-find #"(?s)<pre>(.*?)</pre>")                ;extract the stack trace inside the <pre> tags.
            (second)
-           (string/split-lines))
+           (s/split-lines))
       (catch Exception e
         (throw ex)))))
 
