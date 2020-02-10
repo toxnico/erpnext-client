@@ -128,6 +128,20 @@
                       :pwd password})
       :cookies))
 
+(defn exception->stacktrace [ex]
+  "Extracts the stacktrace from a frappé http exception.
+  Returns the stack trace lines as an collection of strings"
+  (let [html (->> ex
+                  (ex-data)
+                  :body)]                                   ;html error page
+    (try
+      (->> html
+           (re-find #"(?s)<pre>(.*?)</pre>")                ;extract the stack trace inside the <pre> tags.
+           (second)
+           (string/split-lines))
+      (catch Exception e
+        (throw ex)))))
+
 (defn login!
   "Calls remote login and stores the base url
    and authentication cookies into the local atoms"
