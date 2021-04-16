@@ -49,8 +49,8 @@
     (catch Exception ex
       (let [http-status (-> ex ex-data :status)]
         (if (= 404 http-status)
-          nil ;erreur 404 -> on retourne un nil propre.
-          (throw ex)))))) ;sinon, on relance l'exception
+          nil                                               ;erreur 404 -> on retourne un nil propre.
+          (throw ex))))))                                   ;sinon, on relance l'exception
 
 
 (defn erp-get
@@ -93,12 +93,23 @@
     (http/delete url
                  {:cookies @auth-cookies})))
 
+(defn erp-delete-items!
+  "Deletes ALL the documents of a given doctype"
+  [doctype items]
+  (let [url (str (:base @config) "/" (@config :rpc) "/frappe.desk.reportview.delete_items")]
+    (http/post url
+               {:form-params {:doctype doctype
+                              :items   (cheshire.core/encode items)}
+                :cookies     @auth-cookies})))
+
+
 (defn erp-delete-all!
   "Deletes ALL the documents of a given doctype"
   [doctype]
-  (doseq [s (erp-get doctype {:limit_page_length 1000000
-                              :fields            ["name"]})]
-    (erp-delete! doctype (:name s))))
+  (let [names (->> (erp-get doctype {:limit_page_length 1000000
+                                     :fields            ["name"]})
+                   (map :name))]
+    (erp-delete-items! doctype names)))
 
 (defn erp-rpc-post!
   "Sends an RPC action request. Accepts a map as request body"
@@ -106,7 +117,9 @@
   (let [url (str (:base @config) "/" (@config :rpc) "/" method)]
     (http/post url
                {:content-type :json
-                :body         (cheshire.core/encode body)})))
+                :body         (cheshire.core/encode body)
+                :cookies      @auth-cookies})))
+
 
 (defn erp-submit-document!
   "Submits a document by providing its doctype and name"
