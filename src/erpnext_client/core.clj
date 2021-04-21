@@ -120,6 +120,17 @@
                 :body         (cheshire.core/encode body)
                 :cookies      @auth-cookies})))
 
+(defn erp-upload-file
+  [doctype docname is-private folder file-path]
+  (let [url (str (:base @config) "/" (@config :rpc) "/upload_file")]
+    (http/post url
+               {:cookies @auth-cookies
+                :multipart [{:name "doctype" :content doctype}
+                            {:name "folder" :content folder}
+                            {:name "docname" :content docname}
+                            {:name "is_private" :content (str is-private)}
+                            {:name "file" :content (clojure.java.io/file file-path)}]})))
+
 
 (defn erp-submit-document!
   "Submits a document by providing its doctype and name"
@@ -165,3 +176,4 @@
   (let [cookies (erp-login->cookies user password)]
     (reset! auth-cookies cookies)
     (println "Logged in as " user)))
+
